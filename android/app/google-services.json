@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "369260883854",
+    "project_id": "brigde",
+    "storage_bucket": "brigde.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369260883854:android:399ba34d28cbcf9f5d3edf",
+        "android_client_info": {
+          "package_name": "com.bridge.bridge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_S5iLO62loO-IkNWfJkY20Fpq0qS3ghA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

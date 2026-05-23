@@ -1,0 +1,58 @@
+import '../../../shared/models/corridor.dart';
+
+const List<Corridor> kSupportedCorridors = [
+  Corridor(
+    id: 'CAD_KES',
+    fromCurrency: 'CAD',
+    toCurrency: 'KES',
+    countryCode: 'KE',
+    countryName: 'Kenya',
+    flagEmoji: '🇰🇪',
+    deliveryMethods: ['M-Pesa', 'Bank transfer'],
+  ),
+  Corridor(
+    id: 'CAD_CDF',
+    fromCurrency: 'CAD',
+    toCurrency: 'CDF',
+    countryCode: 'CD',
+    countryName: 'DR Congo',
+    flagEmoji: '🇨🇩',
+    deliveryMethods: ['MTN Mobile Money', 'Airtel Money', 'Bank transfer'],
+  ),
+  Corridor(
+    id: 'CAD_RWF',
+    fromCurrency: 'CAD',
+    toCurrency: 'RWF',
+    countryCode: 'RW',
+    countryName: 'Rwanda',
+    flagEmoji: '🇷🇼',
+    deliveryMethods: ['MTN MoMo', 'Airtel Money', 'Bank transfer'],
+  ),
+  Corridor(
+    id: 'CAD_NGN',
+    fromCurrency: 'CAD',
+    toCurrency: 'NGN',
+    countryCode: 'NG',
+    countryName: 'Nigeria',
+    flagEmoji: '🇳🇬',
+    deliveryMethods: ['Bank transfer', 'Mobile Money'],
+  ),
+  Corridor(
+    id: 'CAD_GHS',
+    fromCurrency: 'CAD',
+    toCurrency: 'GHS',
+    countryCode: 'GH',
+    countryName: 'Ghana',
+    flagEmoji: '🇬🇭',
+    deliveryMethods: ['MTN MoMo', 'Vodafone Cash', 'Bank transfer'],
+  ),
+  Corridor(
+    id: 'CAD_XOF',
+    fromCurrency: 'CAD',
+    toCurrency: 'XOF',
+    countryCode: 'SN',
+    countryName: 'Senegal',
+    flagEmoji: '🇸🇳',
+    deliveryMethods: ['Orange Money', 'Bank transfer'],
+  ),
+];

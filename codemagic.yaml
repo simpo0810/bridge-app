@@ -1,0 +1,84 @@
+workflows:
+  ios-release:
+    name: iOS Release (App Store)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    # ── Triggering ────────────────────────────────────────────────────────────
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'v*'
+          include: true
+      cancel_previous_builds: false
+
+    # ── Integrations ──────────────────────────────────────────────────────────
+    # Add an App Store Connect API key in Codemagic → Teams → Integrations
+    # and name it exactly "Bridge App Store Connect".
+    integrations:
+      app_store_connect: Bridge App Store Connect
+
+    # ── Environment ───────────────────────────────────────────────────────────
+    environment:
+      # Automatic code signing — Codemagic fetches the certificate and
+      # provisioning profile from App Store Connect automatically.
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.bridge.bridge
+
+      flutter: stable
+      xcode: latest
+
+      # Create an environment variable group called "bridge_secrets" in
+      # Codemagic → Teams → Global variables and add:
+      #   GOOGLE_SERVICE_INFO_PLIST  — base64-encoded GoogleService-Info.plist
+      #     macOS: base64 -i GoogleService-Info.plist | pbcopy
+      groups:
+        - bridge_secrets
+
+      vars:
+        FLUTTER_PROJECT: bridge_app
+
+    # ── Build scripts ─────────────────────────────────────────────────────────
+    scripts:
+      - name: Inject GoogleService-Info.plist
+        script: |
+          echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode \
+            > "$CM_BUILD_DIR/$FLUTTER_PROJECT/ios/Runner/GoogleService-Info.plist"
+
+      - name: Install Flutter dependencies
+        script: |
+          cd "$FLUTTER_PROJECT"
+          flutter pub get
+
+      - name: Generate Riverpod code
+        script: |
+          cd "$FLUTTER_PROJECT"
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build release IPA
+        script: |
+          cd "$FLUTTER_PROJECT"
+          flutter build ipa \
+            --release \
+            --build-name=$(git describe --tags --abbrev=0 | sed 's/^v//') \
+            --build-number=$BUILD_NUMBER
+
+    # ── Artifacts ─────────────────────────────────────────────────────────────
+    artifacts:
+      - bridge_app/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    # ── Publishing ────────────────────────────────────────────────────────────
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false   # flip to true when ready for production
+      email:
+        recipients:
+          - simpliceint00@gmail.com
+        notify:
+          success: true
+          failure: true
