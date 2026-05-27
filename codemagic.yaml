@@ -1,29 +1,26 @@
 workflows:
   ios-adhoc:
-    name: iOS Ad Hoc (Sideloadly Testing)
+    name: iOS Unsigned (Sideloadly)
     max_build_duration: 60
     instance_type: mac_mini_m2
 
-    # ── Triggering ────────────────────────────────────────────────────────────
+    # Triggers on every push to master — Codemagic emails you the IPA,
+    # then Sideloadly signs and installs it with your free Apple ID.
     triggering:
       events:
         - push
       branch_patterns:
         - pattern: master
           include: true
+        - pattern: main
+          include: true
       cancel_previous_builds: true
 
-    integrations:
-      app_store_connect: Bridge App Store Connect
-
     environment:
-      ios_signing:
-        distribution_type: ad_hoc
-        bundle_identifier: com.bridge.bridge
-
       flutter: stable
       xcode: latest
-
+      # bridge_secrets must exist in Codemagic → Teams → Global variables
+      # and contain GOOGLE_SERVICE_INFO_PLIST (base64 of GoogleService-Info.plist)
       groups:
         - bridge_secrets
 
@@ -39,10 +36,13 @@ workflows:
       - name: Generate Riverpod code
         script: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build Ad Hoc IPA
+      - name: Build unsigned IPA
+        # --no-codesign skips all certificate/provisioning requirements.
+        # Sideloadly re-signs the IPA with your Apple ID before installing.
         script: |
           flutter build ipa \
             --release \
+            --no-codesign \
             --build-name=1.0.0 \
             --build-number=$BUILD_NUMBER
 
