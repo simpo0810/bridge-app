@@ -31,14 +31,13 @@ class DefaultFirebaseOptions {
     storageBucket: 'brigde.firebasestorage.app',
   );
 
-  // TODO: Replace with values from flutterfire configure
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDV2GY0KU3N3VEZZ4Iyn3UmkGfHESyvWBg',
     appId: '1:369260883854:ios:a1e2a8b6d98fb9b95d3edf',
     messagingSenderId: '369260883854',
     projectId: 'brigde',
     storageBucket: 'brigde.firebasestorage.app',
+    iosClientId: '369260883854-5c5ge47oqjk7st14nlsc352h23tpsmp4.apps.googleusercontent.com',
     iosBundleId: 'com.bridge.bridge',
   );
 
