@@ -33,23 +33,32 @@ workflows:
         script: dart run build_runner build --delete-conflicting-outputs
 
       - name: Build unsigned IPA
-        # flutter build ipa --no-codesign skips the export step so no .ipa is
-        # produced. Instead we build the .app then manually package it into the
-        # Payload/ structure that Sideloadly expects.
         script: |
+          set -e
+
           flutter build ios \
             --release \
             --no-codesign \
             --build-name=1.0.0 \
             --build-number=$BUILD_NUMBER
 
-          cd build/ios/iphoneos
-          mkdir -p Payload
-          cp -r Runner.app Payload/Runner.app
+          APP="$CM_BUILD_DIR/build/ios/iphoneos/Runner.app"
+
+          echo "=== build/ios/iphoneos contents ==="
+          ls -la "$CM_BUILD_DIR/build/ios/iphoneos/"
+
+          if [ ! -d "$APP" ]; then
+            echo "ERROR: Runner.app not found at $APP"
+            exit 1
+          fi
+
+          IPA_DIR="$CM_BUILD_DIR/build/ios/ipa"
+          mkdir -p "$IPA_DIR/Payload"
+          cp -r "$APP" "$IPA_DIR/Payload/Runner.app"
+          cd "$IPA_DIR"
           zip -r Runner.ipa Payload
-          mkdir -p "$CM_BUILD_DIR/build/ios/ipa"
-          mv Runner.ipa "$CM_BUILD_DIR/build/ios/ipa/Runner.ipa"
           rm -rf Payload
+          echo "=== IPA size: $(du -sh Runner.ipa) ==="
 
     artifacts:
       - build/ios/ipa/Runner.ipa
