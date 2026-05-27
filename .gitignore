@@ -43,3 +43,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase — never commit service config files
+ios/Runner/GoogleService-Info.plist
+android/app/google-services.json
+
+# iOS signing — certificates and provisioning profiles stay off-repo
+*.p12
+*.mobileprovision
+*.cer

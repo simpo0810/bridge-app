@@ -32,6 +32,9 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   local_auth: ^2.3.0
 
+  # Cloud Functions callable
+  cloud_functions: ^5.4.0
+
   # Subscriptions (Prime)
   purchases_flutter: ^10.1.1
 
