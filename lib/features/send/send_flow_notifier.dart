@@ -36,9 +36,17 @@ class SendFlowNotifier extends StateNotifier<SendFlowState> {
 
   // ── Step 2: Amount ───────────────────────────────────────────────────────────
 
+  static String _corridorId(String? countryCode) {
+    const map = {
+      'KE': 'CAD_KES', 'CD': 'CAD_CDF', 'RW': 'CAD_RWF',
+      'NG': 'CAD_NGN', 'GH': 'CAD_GHS', 'SN': 'CAD_XOF',
+    };
+    return map[countryCode] ?? 'CAD_KES';
+  }
+
   Future<void> setAmount(double amountCAD) async {
     final isPrime = _ref.read(currentUserProvider).valueOrNull?.isPrime ?? false;
-    final corridorId = 'CAD_${state.selectedContact?.country ?? 'KES'}';
+    final corridorId = _corridorId(state.selectedContact?.country);
 
     state = state.copyWith(isLoading: true);
 
@@ -110,7 +118,7 @@ class SendFlowNotifier extends StateNotifier<SendFlowState> {
           'country': contact.country,
           'walletProvider': contact.walletProvider,
         },
-        'corridorId': 'CAD_${contact.country}',
+        'corridorId': _corridorId(contact.country),
       });
 
       state = state.copyWith(isLoading: false);

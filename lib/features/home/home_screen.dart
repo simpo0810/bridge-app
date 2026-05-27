@@ -18,7 +18,7 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(currentUserProvider);
     final user = userAsync.valueOrNull;
-    final corridorId = 'CAD_${user?.preferredCountry ?? 'KE'}';
+    final corridorId = 'CAD_${_currencyFor(user?.preferredCountry)}';
     final rateAsync = ref.watch(exchangeRateProvider(corridorId));
     final isPrime = user?.isPrime ?? false;
 

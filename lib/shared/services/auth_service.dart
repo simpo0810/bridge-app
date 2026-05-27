@@ -62,6 +62,27 @@ class AuthService {
 
   // --- Firestore user document ---
 
+  /// Creates a minimal user document if one doesn't exist yet.
+  /// Handles accounts created directly in Firebase Console (bypassing onboarding).
+  Future<void> ensureUserDocument(User user) async {
+    final snap = await _db.collection('users').doc(user.uid).get();
+    if (snap.exists) return;
+    final now = Timestamp.now();
+    await _db.collection('users').doc(user.uid).set({
+      'firstName': user.displayName?.split(' ').firstOrNull ?? 'Test',
+      'lastName': user.displayName?.split(' ').skip(1).join(' ').isNotEmpty == true
+          ? user.displayName!.split(' ').skip(1).join(' ')
+          : 'User',
+      'email': user.email ?? '',
+      'phone': user.phoneNumber ?? '',
+      'kycStatus': 'verified',
+      'isPrime': false,
+      'preferredCountry': 'KE',
+      'createdAt': now,
+      'updatedAt': now,
+    });
+  }
+
   Future<void> createUserDocument(AppUser user) => _db
       .collection('users')
       .doc(user.uid)

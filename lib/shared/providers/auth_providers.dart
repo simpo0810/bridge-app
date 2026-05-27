@@ -12,12 +12,15 @@ final firebaseAuthStateProvider = StreamProvider<User?>((ref) {
   return ref.watch(authServiceProvider).authStateChanges;
 });
 
-// Full AppUser document from Firestore, kept in sync
+// Full AppUser document from Firestore, kept in sync.
+// Also auto-creates the document for accounts created outside of onboarding
+// (e.g. manually added in Firebase Console for testing).
 final currentUserProvider = StreamProvider<AppUser?>((ref) {
   final authState = ref.watch(firebaseAuthStateProvider);
   return authState.when(
     data: (user) {
       if (user == null) return const Stream.empty();
+      ref.read(authServiceProvider).ensureUserDocument(user);
       return ref.watch(authServiceProvider).watchUser(user.uid);
     },
     loading: () => const Stream.empty(),
