@@ -37,17 +37,26 @@ workflows:
         script: dart run build_runner build --delete-conflicting-outputs
 
       - name: Build unsigned IPA
-        # --no-codesign skips all certificate/provisioning requirements.
-        # Sideloadly re-signs the IPA with your Apple ID before installing.
+        # flutter build ipa --no-codesign skips the export step so no .ipa is
+        # produced. Instead we build the .app then manually package it into the
+        # Payload/ structure that Sideloadly expects.
         script: |
-          flutter build ipa \
+          flutter build ios \
             --release \
             --no-codesign \
             --build-name=1.0.0 \
             --build-number=$BUILD_NUMBER
 
+          cd build/ios/iphoneos
+          mkdir -p Payload
+          cp -r Runner.app Payload/Runner.app
+          zip -r Runner.ipa Payload
+          mkdir -p "$CM_BUILD_DIR/build/ios/ipa"
+          mv Runner.ipa "$CM_BUILD_DIR/build/ios/ipa/Runner.ipa"
+          rm -rf Payload
+
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/ios/ipa/Runner.ipa
       - /tmp/xcodebuild_logs/*.log
 
     publishing:
